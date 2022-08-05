@@ -77,9 +77,10 @@ public class OrdersServiceImpl extends ServiceImpl<OrdersMapper, Orders> impleme
             orderDetail.setSetmealId(item.getSetmealId());
             orderDetail.setName(item.getName());
             orderDetail.setImage(item.getImage());
-            orderDetail.setAmount(item.getAmount());
-            int i = amount.addAndGet(item.getAmount().multiply(new BigDecimal(item.getNumber())).intValue());
 
+            orderDetail.setAmount(item.getAmount());
+
+           amount.addAndGet(item.getAmount().multiply(new BigDecimal(item.getNumber())).intValue());
 
             return orderDetail;
         }).collect(Collectors.toList());
