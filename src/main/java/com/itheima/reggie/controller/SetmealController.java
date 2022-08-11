@@ -11,6 +11,10 @@ import com.itheima.reggie.entity.Setmeal;
 import com.itheima.reggie.service.CategoryService;
 import com.itheima.reggie.service.SetmealDishService;
 import com.itheima.reggie.service.SetmealService;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiImplicitParam;
+import io.swagger.annotations.ApiImplicitParams;
+import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,6 +30,7 @@ import java.util.stream.Collectors;
 /**
  * 套餐管理
  */
+@Api(tags = "套餐管理")
 @RestController
 @RequestMapping("/setmeal")
 @Slf4j
@@ -52,8 +57,9 @@ public class SetmealController {
      * @param setmealDto
      * @return
      */
-    @CacheEvict(value = "setmaelCache",allEntries = true)
+    @CacheEvict(value = "setmaelCache", allEntries = true)
     @PostMapping
+    @ApiOperation(value = "新增套餐接口")
     public R<String> save(@RequestBody SetmealDto setmealDto) {
         log.info("套餐信息：{}", setmealDto);
 
@@ -71,6 +77,12 @@ public class SetmealController {
      * @return
      */
     @GetMapping("/page")
+    @ApiOperation(value = "套餐分页查询接口")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "page", value = "页数", required = true),
+            @ApiImplicitParam(name = "pageSize", value = "每页显示记录数", required = true),
+            @ApiImplicitParam(name = "name", value = "套餐名称", required = false)
+    })
     public R<Page> page(int page, int pageSize, String name) {
         //分页构造器
         Page<Setmeal> pageInfo = new Page<>(page, pageSize);
@@ -116,8 +128,9 @@ public class SetmealController {
      * @param ids
      * @return
      */
-    @CacheEvict(value = "setmaelCache",allEntries = true)
+    @CacheEvict(value = "setmaelCache", allEntries = true)
     @DeleteMapping
+    @ApiOperation(value = "删除套餐接口")
     public R<String> delete(@RequestParam List<Long> ids) {
         log.info("ids:{}", ids);
         setmealService.romoveWithDish(ids);
@@ -130,8 +143,9 @@ public class SetmealController {
      * @param setmeal
      * @return
      */
-    @Cacheable(value = "setmaelCache",key = "#setmeal.categoryId+'-'+#setmeal.status")
+    @Cacheable(value = "setmaelCache", key = "#setmeal.categoryId+'-'+#setmeal.status")
     @GetMapping("/list")
+    @ApiOperation(value = "套餐条件查询接口")
     public R<List<Setmeal>> list(Setmeal setmeal) {
         LambdaQueryWrapper<Setmeal> queryWrapper = new LambdaQueryWrapper<>();
         queryWrapper.eq(setmeal.getCategoryId() != null, Setmeal::getCategoryId, setmeal.getCategoryId());
